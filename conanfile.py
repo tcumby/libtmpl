@@ -16,8 +16,28 @@ class LibTmplConan(ConanFile):
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
-    options = {}
-    default_options = {}
+    options = {
+        "use_openmp": [True, False],
+        "use_inline": [True, False],
+        "use_tmpl_math": [True, False],
+        "use_ieee_float": [True, False],
+        "use_asm": [True, False],
+        "use_builtin": [True, False],
+        "use_fasm": [True, False],
+        "use_longlong": [True, False],
+        "use_int": [True, False]
+    }
+    default_options = {
+        "use_openmp": True,
+        "use_inline": True,
+        "use_tmpl_math": True,
+        "use_ieee_float": True,
+        "use_asm": True,
+        "use_builtin": True,
+        "use_fasm": True,
+        "use_longlong": True,
+        "use_int": True
+    }
 
     # Sources are located in the same place as this recipe, copy them to the recipe
     exports_sources = "CMakeLists.txt", "src/*", "include/*"
