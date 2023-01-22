@@ -66,6 +66,15 @@ class LibTmplConan(ConanFile):
 
     def build(self):
         cmake = CMake(self)
+        cmake.definitions["LIBTMPL_USE_OMP"] = LibTmplConan.to_cmake_boolean(self.options.use_openmp)
+        cmake.definitions["LIBTMPL_USE_INLINE"] = LibTmplConan.to_cmake_boolean(self.options.use_inline)
+        cmake.definitions["LIBTMPL_USE_MATH"] = LibTmplConan.to_cmake_boolean(self.options.use_tmpl_math)
+        cmake.definitions["LIBTMPL_USE_IEEE"] = LibTmplConan.to_cmake_boolean(self.options.use_ieee_float)
+        cmake.definitions["LIBTMPL_USE_ASM"] = LibTmplConan.to_cmake_boolean(self.options.use_asm)
+        cmake.definitions["LIBTMPL_USE_BUILTIN"] = LibTmplConan.to_cmake_boolean(self.options.use_builtin)
+        cmake.definitions["LIBTMPL_USE_FASM"] = LibTmplConan.to_cmake_boolean(self.options.use_fasm)
+        cmake.definitions["LIBTMPL_USE_LONGLONG"] = LibTmplConan.to_cmake_boolean(self.options.use_longlong)
+        cmake.definitions["LIBTMPL_USE_INT"] = LibTmplConan.to_cmake_boolean(self.options.use_int)
         cmake.configure()
         cmake.build()
 
@@ -75,3 +84,7 @@ class LibTmplConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = ["tmpl"]
+
+    @classmethod
+    def to_cmake_boolean(cls, value: bool) -> str:
+        return "True" if value else "False"
