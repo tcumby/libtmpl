@@ -25,7 +25,8 @@ class LibTmplConan(ConanFile):
         "use_builtin": [True, False],
         "use_fasm": [True, False],
         "use_longlong": [True, False],
-        "use_int": [True, False]
+        "use_int": [True, False],
+        "c_standard": ["c89", "c99", "c11", "c17"]
     }
     default_options = {
         "use_openmp": True,
@@ -36,7 +37,8 @@ class LibTmplConan(ConanFile):
         "use_builtin": True,
         "use_fasm": True,
         "use_longlong": True,
-        "use_int": True
+        "use_int": True,
+        "c_standard": "c11"
     }
 
     # Sources are located in the same place as this recipe, copy them to the recipe
@@ -75,6 +77,7 @@ class LibTmplConan(ConanFile):
         cmake.definitions["LIBTMPL_USE_FASM"] = LibTmplConan.to_cmake_boolean(self.options.use_fasm)
         cmake.definitions["LIBTMPL_USE_LONGLONG"] = LibTmplConan.to_cmake_boolean(self.options.use_longlong)
         cmake.definitions["LIBTMPL_USE_INT"] = LibTmplConan.to_cmake_boolean(self.options.use_int)
+        cmake.definitions["LIBTMPL_STDVER"] = "-std=" + self.options.c_standard
         cmake.configure()
         cmake.build()
 
@@ -84,7 +87,11 @@ class LibTmplConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = ["tmpl"]
+        self.cpp_info.set_property("cmake_find_mode", "both")
+        self.cpp_info.set_property("cmake_file_name", "Tmpl")
+        self.cpp_info.set_property("cmake_target_name", "tmpl::tmpl")
+        self.cpp_info.set_property("pkg_config_name", "tmpl")
 
     @classmethod
     def to_cmake_boolean(cls, value: bool) -> str:
-        return "True" if value else "False"
+        return "TRUE" if value else "FALSE"
