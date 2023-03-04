@@ -49,7 +49,7 @@ jobs:
             uses: turtlebrowser/get-conan@main
 
         -   name: Create default Conan profile
-            run: conan profile default
+            run: conan profile detect
 
         -   name: Conan install dependencies
             run: conan install . -s build_type=${{env.BUILD_TYPE}} --output-folder=${{github.workspace}}/build/libtmpl --build=missing
