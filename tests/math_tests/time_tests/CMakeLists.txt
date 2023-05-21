@@ -5,7 +5,6 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN AND SYSTEM_PROCESSOR STREQUAL "x86_64")
     include(FetchLinAsm)
 endif()
 
-include(FindGSL)
 
 project(math_time_tests)
 
@@ -27,9 +26,9 @@ foreach(source ${sources})
     target_include_directories(
         ${app}
         PUBLIC "${TMPL_PARENT_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}"
-        PRIVATE "${GSL_INCLUDE_DIRS}"
+        PRIVATE "$<TARGET_PROPERTY:GSL::gsl,INTERFACE_INCLUDE_DIRECTORIES>"
     )
-    target_link_libraries(${app} PRIVATE tmpl::tmpl CONAN_LIB::GSL_gsl)
+    target_link_libraries(${app} PRIVATE tmpl::tmpl GSL::gsl)
     if(UNIX)
         target_link_libraries(${app} PRIVATE m)
     endif()

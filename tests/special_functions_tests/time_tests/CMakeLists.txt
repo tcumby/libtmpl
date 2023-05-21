@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../cmake")
 
-include(FindGSL)
 
 project(special_function_time_tests)
 
@@ -18,9 +17,9 @@ foreach(source ${sources})
     target_include_directories(
         ${app}
         PUBLIC "${TMPL_PARENT_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}"
-        PRIVATE "${GSL_INCLUDE_DIRS}"
+        PRIVATE "$<TARGET_PROPERTY:GSL::gsl,INTERFACE_INCLUDE_DIRECTORIES>"
     )
-    target_link_libraries(${app} PRIVATE tmpl::tmpl CONAN_LIB::GSL_gsl)
+    target_link_libraries(${app} PRIVATE tmpl::tmpl GSL::gsl)
     if(UNIX)
         target_link_libraries(${app} PRIVATE m)
     endif()

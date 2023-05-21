@@ -1,5 +1,10 @@
 {
-  "version": 5,
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
   "configurePresets": [
     {
       "name": "ci-base",
@@ -7,6 +12,8 @@
       "binaryDir": "${sourceParentDir}/build/libtmpl",
       "installDir": "${sourceParentDir}/install/libtmpl",
       "cacheVariables": {
+        "CONAN_PROVIDER_SRC": "${sourceParentDir}/build/libtmpl/conan_proider",
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceParentDir}/build/libtmpl/conan_proider/conan_provider.cmake",
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_EXPORT_COMPILE_COMMANDS": true,
         "LIBTMPL_BUILD_EXAMPLES": false,

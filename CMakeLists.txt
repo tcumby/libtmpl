@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.24)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_CURRENT_BINARY_DIR})
 include(ParseCStandard)
 
@@ -68,15 +68,20 @@ if(NOT DEFINED LIBTMPL_STDVER)
     set(LIBTMPL_STDVER "-std=c89" CACHE STRING "" FORCE)
 endif()
 
-# Download automatically, you can also just copy the conan.cmake file
-if((LIBTMPL_BUILD_TESTS OR LIBTMPL_BUILD_EXAMPLES) AND NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/conan.cmake")
-    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-    file(
-        DOWNLOAD
-            "https://raw.githubusercontent.com/conan-io/cmake-conan/0.18.1/conan.cmake"
-            "${CMAKE_BINARY_DIR}/conan.cmake"
-        TLS_VERIFY ON
+if((LIBTMPL_BUILD_TESTS OR LIBTMPL_BUILD_EXAMPLES))
+include(FetchContent)
+    if(NOT DEFINED CONAN_PROVIDER_SRC)
+        set(CONAN_PROVIDER_SRC ${CMAKE_CURRENT_BINARY_DIR}/conan_provider)
+    endif()
+    fetchcontent_declare(
+        conan-provider-checkout
+        GIT_REPOSITORY https://github.com/conan-io/cmake-conan.git
+        GIT_TAG c69227d # on develop2 branch
+        SOURCE_DIR
+        ${CONAN_PROVIDER_SRC}
     )
+
+    fetchcontent_populate(conan-provider-checkout)
 endif()
 
 # Construct file lists
@@ -87,19 +92,6 @@ file(GLOB_RECURSE sources LIST_DIRECTORIES FALSE *.c)
 configure_file(cmake/sourceList.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/sourceList.cmake @ONLY)
 
 project(libtmpl LANGUAGES C)
-
-if(LIBTMPL_BUILD_TESTS OR LIBTMPL_BUILD_EXAMPLES)
-    include(${CMAKE_CURRENT_BINARY_DIR}/conan.cmake)
-
-    conan_cmake_autodetect(settings)
-
-    conan_cmake_install(PATH_OR_REFERENCE ${CMAKE_CURRENT_SOURCE_DIR}
-                        BUILD missing
-                        REMOTE conancenter
-                        SETTINGS ${settings}
-                        PROFILE     "${CONAN_PROFILE_FILE}"
-    )
-endif()
 
 cmake_path(GET CMAKE_CURRENT_SOURCE_DIR PARENT_PATH TMPL_PARENT_DIR)
 
@@ -454,6 +446,9 @@ endif()
 add_subdirectory("src")
 if(LIBTMPL_BUILD_TESTS)
     enable_testing()
+    # A current limitation of conan_support.cmake causes is that we must call find_package(GSL) here
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/conan")
+    find_package(GSL REQUIRED)
     add_subdirectory("tests")
 endif()
 
