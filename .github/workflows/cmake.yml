@@ -5,6 +5,7 @@ on:
         branches:
         -   master
         -   add-cmake-build-system-redo
+        -   upgrade-to-conan2-redo
     pull_request:
         branches:
         -   master
